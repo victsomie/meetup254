@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_post_vlog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.PostItemActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/uploadprompt"
+        android:src="@drawable/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="192dp" />
+
+    <!--<VideoView-->
+    <!--android:visibility="gone"-->
+    <!--android:clickable="true"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="192dp"-->
+    <!--android:id="@+id/postvideoView" />-->
+
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/postvideoView"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="192dp" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/postvideotitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_Title"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:background="@color/colorPrimary"
+        android:textColor="@color/pure_white"
+        android:id="@+id/post"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/action_post"
+        android:textStyle="bold" />
+
+</LinearLayout>

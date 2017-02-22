@@ -28,8 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".Activities.ViewListVLogs" />
+        <activity android:name=".Activities.ViewSingleItem" />
+        <activity android:name=".Activities.PostItemActivity"></activity>
     </application>
 
 </manifest>

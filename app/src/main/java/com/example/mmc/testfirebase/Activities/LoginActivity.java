@@ -180,7 +180,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
-            mAuth.signOut();
         }
     }
 }
