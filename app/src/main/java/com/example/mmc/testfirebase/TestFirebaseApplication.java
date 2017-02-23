@@ -18,4 +18,6 @@ public class TestFirebaseApplication extends Application {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
     }
+
+
 }

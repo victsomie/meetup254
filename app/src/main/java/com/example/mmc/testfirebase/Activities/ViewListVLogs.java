@@ -3,6 +3,7 @@ package com.example.mmc.testfirebase.Activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.mmc.testfirebase.Adapters.ListItemsRecyclerAdapter;
 import com.example.mmc.testfirebase.Constants;
@@ -31,7 +33,7 @@ import java.util.Map;
  */
 public class ViewListVLogs extends AppCompatActivity {
 
-    SharedPreferences prefs ;
+    SharedPreferences prefs;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference().child(Constants.firebase_reference_video);
     RecyclerView listVlogs;
@@ -47,11 +49,11 @@ public class ViewListVLogs extends AppCompatActivity {
         coordinatorLayout = (NestedScrollView) findViewById(R.id
                 .forthesnackbar);
 
-        listVideos= new ArrayList<ListIem>();
+        listVideos = new ArrayList<ListIem>();
 
-        listVlogs=(RecyclerView)findViewById(R.id.recyclelistVideos);
+        listVlogs = (RecyclerView) findViewById(R.id.recyclelistVideos);
         listVlogs.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
-        adapter = new ListItemsRecyclerAdapter(getApplicationContext(),listVideos,myRef);
+        adapter = new ListItemsRecyclerAdapter(getApplicationContext(), listVideos, myRef);
         listVlogs.setAdapter(adapter);
         getalldata();
 
@@ -80,9 +82,8 @@ public class ViewListVLogs extends AppCompatActivity {
                     ));
 
 
-
                     listVlogs.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
-                    adapter = new ListItemsRecyclerAdapter(getApplicationContext(),listVideos,myRef);
+                    adapter = new ListItemsRecyclerAdapter(getApplicationContext(), listVideos, myRef);
                     listVlogs.setAdapter(adapter);
 
                     adapter.notifyDataSetChanged();
@@ -123,16 +124,16 @@ public class ViewListVLogs extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if  (id == R.id.menu_post_new_video ){
+        if (id == R.id.menu_post_new_video) {
             // Go to post a video activity
-            Intent i=new Intent(getApplicationContext(),PostItemActivity.class);
+            Intent i = new Intent(getApplicationContext(), PostItemActivity.class);
             startActivity(i);
             finish();
         }
         if (id == R.id.action_logout) {
             //Logout a user and go back to login activity
             FirebaseAuth.getInstance().signOut();
-            Intent i = new Intent(getApplicationContext(),LoginActivity.class);
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
             finish();
 
@@ -141,4 +142,28 @@ public class ViewListVLogs extends AppCompatActivity {
 
     }
 
+    private Boolean exit = false;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        /**
+        if (exit) {
+            finish();
+        } else {
+            Toast.makeText(this, "Click exit again to close", Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+         **/
+    }
+
+
 }
+

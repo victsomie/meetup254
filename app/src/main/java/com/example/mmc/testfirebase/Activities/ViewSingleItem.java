@@ -140,10 +140,6 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
 
                     addComment.setText("");
                     myRef.child(FirebaseKey).child(Constants.firebase_reference_video_comments).push().setValue(commentobject);
-
-
-//
-
                     return true;
                 }
 
@@ -178,7 +174,7 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
                 if (newPost != null) {
                     SelectVideoObject = new ListIem(
                             newPost.get(Constants.firebase_reference_video_title).toString(),
-                            newPost.get(Constants.firebase_reference_video_path).toString(),
+                            // newPost.get(Constants.firebase_reference_video_path).toString(),
                             newPost.get(Constants.firebase_reference_video_uploader).toString(),
                             newPost.get(Constants.firebase_reference_video_views).toString(),
                             dataSnapshot.getKey());
@@ -214,8 +210,11 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    // Reading the commentings
     private void fillchatdata() {
         FirebaseKey = getIntent().getExtras().getString(Constants.extras_firekeyreference);
+        // THE COMMENTING LINE SHOULD GO TO THE CORRECT VIDEO
+        // myRef.child(FirebaseKey).child(Constants.firebase_reference_video_comments).addChildEventListener(new ChildEventListener() {
         myRef.child(FirebaseKey).child(Constants.firebase_reference_video_comments).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -224,7 +223,8 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
                     String whatineed = newPost.get(Constants.firebase_reference_video_comments_username).toString()
                             + ":" +
                             newPost.get(Constants.firebase_reference_video_comments_comment).toString();
-                    commentslazycount.add(whatineed);
+                    // commentslazycount.add(whatineed); // adds comment as the last in the comments list
+                    commentslazycount.add(0, whatineed);
                     itemsAdapter.notifyDataSetChanged();
 
                 }
@@ -291,5 +291,13 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onVisibilityChange(int visibility) {
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        finish();
     }
 }

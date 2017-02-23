@@ -51,21 +51,33 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
+        mAuth = FirebaseAuth.getInstance();
+        authenticationSetup();
+
+        setContentView(R.layout.activity_login);
 
         prefs = getApplication().getSharedPreferences(Constants.shared_preference, 0);
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
         mUsernameView = (EditText) findViewById(R.id.username);
-        mAuth = FirebaseAuth.getInstance();
-        authenticationSetup();
+
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin(mEmailView.getText().toString(), mPasswordView.getText().toString(), mUsernameView.getText().toString());
+                    String email = mEmailView.getText().toString();
+                    String password = mPasswordView.getText().toString();
+                    String username = mUsernameView.getText().toString();
+
+                    email =email.trim();
+                    password = password.trim();
+                    username = username.trim();
+
+                    attemptLogin(email, password, username);
+
+                    //attemptLogin(mEmailView.getText().toString(), mPasswordView.getText().toString(), mUsernameView.getText().toString());
                     return true;
                 }
                 return false;
@@ -76,7 +88,16 @@ public class LoginActivity extends AppCompatActivity {
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin(mEmailView.getText().toString(), mPasswordView.getText().toString(), mUsernameView.getText().toString());
+                String email = mEmailView.getText().toString();
+                String password = mPasswordView.getText().toString();
+                String username = mUsernameView.getText().toString();
+
+                email =email.trim();
+                password = password.trim();
+                username = username.trim();
+                // attemptLogin(mEmailView.getText().toString(), mPasswordView.getText().toString(), mUsernameView.getText().toString());
+                attemptLogin(email, password, username);
+
                 prefs.edit().putString(Constants.firebase_reference_user_username,
                         mUsernameView.getText().toString()).commit();
             }
@@ -111,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Authentication failed: Couldnt create user", Toast.LENGTH_SHORT).show();
 
 
                         }
@@ -181,5 +202,12 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        finish();
     }
 }

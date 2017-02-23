@@ -98,10 +98,11 @@ public class ListItemsRecyclerAdapter extends RecyclerView.Adapter<ListItemsRecy
 
                 Intent xbrew = new Intent(mContext, ViewSingleItem.class);
                 xbrew.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                xbrew.putExtra(Constants.extras_firekeyreference,
-                        feedItemList.get(position).getFirekey());
-
-
+                // Try to get the reference for the video details in the object feeditem or feedItemList
+                // This will be used to create for commenting in the reight place
+                //  ====== TODO ===== The below line might be fetchin the wrong things
+                // xbrew.putExtra(Constants.extras_firekeyreference, feedItemList.get(position).getFirekey()); Testing for this line
+                xbrew.putExtra(Constants.extras_firekeyreference, feedItemList.get(position).getViews()); // .getViews() kind of give the key for that video
                 mContext.startActivity(xbrew);
 
 

@@ -4,77 +4,60 @@
     android:id="@+id/activity_view_single_vlog"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    tools:context=".Activities.ViewSingleItem"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context=".Activities.ViewSingleItem">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content">
+
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
             <!--<VideoView-->
             <!--android:id="@+id/viewsingleVlog"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="164dp" />-->
 
-            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-                xmlns:android="http://schemas.android.com/apk/res/android"
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/viewsingleVlog"
                 android:layout_width="match_parent"
                 android:layout_height="192dp" />
 
             <TextView
                 android:id="@+id/viewsingleVlogTitle"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:text="Title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Title"
+                android:textColor="@color/black" />
+
             <TextView
                 android:id="@+id/viewsingleVlogViews"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:text="Views"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Views"
+                android:textColor="@color/black" />
 
 
             <TextView
                 android:id="@+id/viewsingleVlogComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="left"
-                android:textColor="@color/black"
                 android:text="comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-
-
-            <ListView
-                android:id="@+id/comments_listView"
-                android:layout_width="match_parent"
-                android:layout_height="319dp"
-                android:layout_above="@+id/form"
-                android:layout_alignParentTop="true"
-                android:clipToPadding="false"
-                android:scrollbars="vertical"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="1dp"
-                android:listSelector="@android:color/transparent"
-                android:animateLayoutChanges="true"
-                android:transcriptMode="alwaysScroll" >
-            </ListView>
+                android:textColor="@color/black" />
 
             <RelativeLayout
                 android:id="@+id/form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:padding="16dp"
-                android:background="@android:color/white">
+                android:background="@android:color/white"
+                android:padding="16dp">
 
                 <EditText
                     android:id="@+id/chat_editText"
@@ -82,17 +65,29 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentRight="true"
-                    android:hint="Type a comment"
+                    android:hint="Add a comment"
                     android:inputType="text" />
 
             </RelativeLayout>
 
-
         </LinearLayout>
 
 
-
     </ScrollView>
+    <ListView
+        android:id="@+id/comments_listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="1dp"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="vertical"
+        android:stackFromBottom="false">
+        <!--android:transcriptMode="alwaysScroll">-->
+
+    </ListView>
 
 
 </LinearLayout>
