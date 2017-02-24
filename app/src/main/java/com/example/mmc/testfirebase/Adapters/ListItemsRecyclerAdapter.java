@@ -67,7 +67,7 @@ public class ListItemsRecyclerAdapter extends RecyclerView.Adapter<ListItemsRecy
         }
 
         if (customViewHolder.tvViews != null) {
-            customViewHolder.tvViews.setText(feedItem.getViews() + "Views"); // WHY THIS LINE CONCATENATING????
+            customViewHolder.tvViews.setText(feedItem.getViews() + " Views"); // WHY THIS LINE CONCATENATING????
             // customViewHolder.tvViews.setText(feedItem.getViews());
         }
         if (customViewHolder.imPhoto != null) {
@@ -84,16 +84,19 @@ public class ListItemsRecyclerAdapter extends RecyclerView.Adapter<ListItemsRecy
                 int position = holder.getPosition();
 
                 //int views = Integer.parseInt(feedItemList.get(position).getViews()); //Original line that has error in integer
-                int views = Integer.parseInt(feedItemList.get(position).getUploader()); // TRYING TO SOLVE FOR THE ABOVE
+                int views = Integer.parseInt(feedItemList.get(position).getViews()); // TRYING TO SOLVE FOR THE ABOVE
                 // views++;
                 views = views + 1;
                 String setviews = String.valueOf(views);
 
+                // ======== Update the number of views under the specific videos
+                // TIP: Use setValue() at the views reference
+
                 // TRY UPDATE THE VIEWS
                 // THE NEXT LINE HAS ERRORS couldn't update the view correctly
                 // mFirebaseReference.child(feedItemList.get(position).getFirekey()).child(Constants.firebase_reference_video_views).setValue(setviews);
-                mFirebaseReference.child(feedItemList.get(position).getViews()).child(Constants.firebase_reference_video_views).setValue(setviews);
-
+                //mFirebaseReference.child(feedItemList.get(position).getViews()).child(Constants.firebase_reference_video_views).setValue(setviews);
+                mFirebaseReference.child(feedItemList.get(position).getFirekey()).child(Constants.firebase_reference_video_views).setValue(setviews);
 
 
                 Intent xbrew = new Intent(mContext, ViewSingleItem.class);
@@ -102,7 +105,7 @@ public class ListItemsRecyclerAdapter extends RecyclerView.Adapter<ListItemsRecy
                 // This will be used to create for commenting in the reight place
                 //  ====== TODO ===== The below line might be fetchin the wrong things
                 // xbrew.putExtra(Constants.extras_firekeyreference, feedItemList.get(position).getFirekey()); Testing for this line
-                xbrew.putExtra(Constants.extras_firekeyreference, feedItemList.get(position).getViews()); // .getViews() kind of give the key for that video
+                xbrew.putExtra(Constants.extras_firekeyreference, feedItemList.get(position).getFirekey()); // .getViews() kind of give the key for that video
                 mContext.startActivity(xbrew);
 
 

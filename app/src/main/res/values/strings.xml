@@ -15,6 +15,6 @@
     </string>
     <string name="prompt_username">Username</string>
     <string name="prompt_Title">Title</string>
-    <string name="action_post">Post Vlog</string>
+    <string name="action_post">Share clip</string>
     <string name="title_activity_view_list_vlogs">Vlogs</string>
 </resources>

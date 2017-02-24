@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -52,11 +53,13 @@ import com.google.firebase.storage.UploadTask;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostItemActivity extends AppCompatActivity implements View.OnClickListener,ExoPlayer.EventListener,
+public class PostItemActivity extends AppCompatActivity implements View.OnClickListener, ExoPlayer.EventListener,
         PlaybackControlView.VisibilityListener {
 
+    String TAG = "PostItemActivity";
 
-    SharedPreferences prefs ;
+
+    SharedPreferences prefs;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference().child(Constants.firebase_reference_video);
 
@@ -87,17 +90,14 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_item);getUser();
+        setContentView(R.layout.activity_post_item);
+        getUser();
 
         prefs = getApplication().getSharedPreferences(Constants.shared_preference, 0);
-        promptupload = (ImageView)findViewById(R.id.uploadprompt);
-        touploadvideo=(SimpleExoPlayerView) findViewById(R.id.postvideoView);
+        promptupload = (ImageView) findViewById(R.id.uploadprompt);
+        touploadvideo = (SimpleExoPlayerView) findViewById(R.id.postvideoView);
         touploadvideo.setControllerVisibilityListener(this);
         touploadvideo.requestFocus();
-
-
-
-
 
 
 // 1. Create a default TrackSelector
@@ -119,16 +119,28 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
         touploadvideo.setPlayer(player);
 
 
-
-        VideoTitle=(TextView)findViewById(R.id.postvideotitle);
-        btnpost=(Button)findViewById(R.id.post);
+        VideoTitle = (TextView) findViewById(R.id.postvideotitle);
+        btnpost = (Button) findViewById(R.id.post);
         promptupload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // ====== Original code ===============
+                /*
                 Intent intent = new Intent();
                 intent.setType("video/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Video"),REQUEST_TAKE_GALLERY_VIDEO);
+                startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_TAKE_GALLERY_VIDEO);
+                */
+                // ======= END OF ORIGINAL CODE
+
+
+                // ======= TESTING PICKING VIDEOS
+                // Intent intent = new Intent(); // Like seriously???? this line would work???
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("video/*");
+                // intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_TAKE_GALLERY_VIDEO);
 
             }
         });
@@ -139,10 +151,11 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(); // Like seriously???? this line would work???
+                //MY LINE OF CODE //Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("video/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select Video"),REQUEST_TAKE_GALLERY_VIDEO);
+                startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_TAKE_GALLERY_VIDEO);
             }
         });
 
@@ -150,17 +163,33 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View view) {
 
-                Map<String, Object> fillData =new HashMap<String, Object>();
-                fillData.put(Constants.firebase_reference_video_title,VideoTitle.getText().toString());
-                // fillData.put(Constants.firebase_reference_video_path,prefs.getString(Constants.firebase_reference_video_path,null));
-                fillData.put(Constants.firebase_reference_video_uploader,user=prefs.getString(Constants.firebase_reference_user_username,null));
-                fillData.put(Constants.firebase_reference_video_views,String.valueOf(0));
-                myRef.push().setValue(fillData);
-                Toast.makeText(getApplicationContext(),"Vlog Sucessfully Uploaded",Toast.LENGTH_SHORT).show();
-                prefs.edit().remove(Constants.firebase_reference_video_path).commit();
+                Map<String, Object> fillData = new HashMap<String, Object>();
+
+                // Uncomment the below incase you want to go back
+//                fillData.put(Constants.firebase_reference_video_title, VideoTitle.getText().toString());
+//                fillData.put(Constants.firebase_reference_video_path,prefs.getString(Constants.firebase_reference_video_path,null));
+//                fillData.put(Constants.firebase_reference_video_uploader, user = prefs.getString(Constants.firebase_reference_user_username, null));
+//                fillData.put(Constants.firebase_reference_video_views, String.valueOf(0));
+
+                // =========== Only upload if a video is selected =========
+                if (prefs.getString(Constants.firebase_reference_video_path, null) == null) {
+                    Toast.makeText(PostItemActivity.this, "No video to upload", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Here we upload only if there is a real video
+                    // Fill the map video details object with upload data
+                    fillData.put(Constants.firebase_reference_video_title, VideoTitle.getText().toString());
+                    fillData.put(Constants.firebase_reference_video_path, prefs.getString(Constants.firebase_reference_video_path, null));
+                    fillData.put(Constants.firebase_reference_video_uploader, user = prefs.getString(Constants.firebase_reference_user_username, null));
+                    fillData.put(Constants.firebase_reference_video_views, String.valueOf(0));
+
+                    myRef.push().setValue(fillData);
+                    Toast.makeText(getApplicationContext(), "Vlog Sucessfully Uploaded", Toast.LENGTH_SHORT).show();
+                    prefs.edit().remove(Constants.firebase_reference_video_path).commit();
+                }
+                // =========== END checking a video was selhere: Only upload if a video is selected =========
 
 
-                Intent i=new Intent(getApplicationContext(),ViewListVLogs.class);
+                Intent i = new Intent(getApplicationContext(), ViewListVLogs.class);
                 startActivity(i);
                 finish();
 
@@ -172,15 +201,17 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void getUser() {
-        try{
-            user=prefs.getString(Constants.firebase_reference_user_username,null);
-        }catch (Exception IDGAF){
+        try {
+            user = prefs.getString(Constants.firebase_reference_user_username, null);
+        } catch (Exception IDGAF) {
 
         }
 
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Log.e(TAG, ">>> REACHED onActivityResult here!!!!!! ================");
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
                 touploadvideo.setVisibility(View.VISIBLE);
@@ -199,9 +230,6 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
 //                        filemanagerstring).commit();
 
 
-
-
-
                 // MEDIA GALLERY
                 selectedImagePath = getPath(selectedImageUri);
                 if (selectedImagePath != null) {
@@ -211,12 +239,10 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
                     setMediasource(Uri.parse(selectedImagePath));
 
 
-
-
                     // do background work here
                     //saving storage
 
-                    StorageReference riversRef = storageRef.child("Vlogs"+selectedImageUri.getLastPathSegment());
+                    StorageReference riversRef = storageRef.child("Vlogs" + selectedImageUri.getLastPathSegment());
 
                     UploadTask uploadTask;
 
@@ -238,15 +264,12 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
                                     String.valueOf(downloadUrl)).commit();
 
 
-
-
-
                         }
                     });
 
 
-
-
+                } else {
+                    StorageReference riversRef = storageRef.child("Vlogs test videos");
                 }
             }
         }
@@ -269,7 +292,7 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
 
     // UPDATED!
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
             // HERE YOU WILL GET A NULLPOINTER IF CURSOR IS NULL

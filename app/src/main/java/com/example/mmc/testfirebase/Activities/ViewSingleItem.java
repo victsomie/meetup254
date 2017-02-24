@@ -174,12 +174,14 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
                 if (newPost != null) {
                     SelectVideoObject = new ListIem(
                             newPost.get(Constants.firebase_reference_video_title).toString(),
-                            // newPost.get(Constants.firebase_reference_video_path).toString(),
+                            newPost.get(Constants.firebase_reference_video_path).toString(),
                             newPost.get(Constants.firebase_reference_video_uploader).toString(),
                             newPost.get(Constants.firebase_reference_video_views).toString(),
                             dataSnapshot.getKey());
 
-                    videoviews.setText(SelectVideoObject.getViews() + "Views");
+                    // ==== FILL IN THE UI DATA of the single item =====
+                    // videoviews.setText(SelectVideoObject.getViews() + "Views");
+                    videoviews.setText(SelectVideoObject.getViews() + " Views"); // FirebaseKey is the key that fired this activity
                     titleTextView.setText(SelectVideoObject.getTitle());
                     setMediasource(Uri.parse(SelectVideoObject.getPath()));
 
@@ -293,11 +295,4 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
 
     }
 
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        finish();
-    }
 }

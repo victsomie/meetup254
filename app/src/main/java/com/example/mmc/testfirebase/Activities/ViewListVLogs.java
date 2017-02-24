@@ -75,7 +75,7 @@ public class ViewListVLogs extends AppCompatActivity {
                 if (newPost != null) {
                     listVideos.add(new ListIem(
                             newPost.get(Constants.firebase_reference_video_title).toString(),
-                            // newPost.get(Constants.firebase_reference_video_path).toString(),
+                            newPost.get(Constants.firebase_reference_video_path).toString(),
                             newPost.get(Constants.firebase_reference_video_uploader).toString(),
                             newPost.get(Constants.firebase_reference_video_views).toString(),
                             snapshot.getKey()
