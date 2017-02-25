@@ -81,7 +81,7 @@
         android:animateLayoutChanges="true"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
-        android:dividerHeight="1dp"
+        android:dividerHeight="5dp"
         android:listSelector="@android:color/transparent"
         android:scrollbars="vertical"
         android:stackFromBottom="false">

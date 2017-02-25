@@ -170,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void authenticationSetup() {
 
+        //Check for authentication state
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

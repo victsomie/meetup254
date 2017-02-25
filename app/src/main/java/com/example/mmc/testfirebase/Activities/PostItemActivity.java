@@ -146,8 +146,8 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
         });
 
 
+        // Intent to a video picker
         touploadvideo.setOnClickListener(new View.OnClickListener() {
-
 
             @Override
             public void onClick(View view) {
@@ -183,7 +183,7 @@ public class PostItemActivity extends AppCompatActivity implements View.OnClickL
                     fillData.put(Constants.firebase_reference_video_views, String.valueOf(0));
 
                     myRef.push().setValue(fillData);
-                    Toast.makeText(getApplicationContext(), "Vlog Sucessfully Uploaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Video Sucessfully Uploaded", Toast.LENGTH_SHORT).show();
                     prefs.edit().remove(Constants.firebase_reference_video_path).commit();
                 }
                 // =========== END checking a video was selhere: Only upload if a video is selected =========
