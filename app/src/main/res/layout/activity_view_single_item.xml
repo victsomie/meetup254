@@ -79,6 +79,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
+        android:padding="5dp"
+        android:background="@color/victor_color"
         android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="5dp"
