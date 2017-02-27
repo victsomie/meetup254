@@ -20,6 +20,7 @@ public class Constants {
 
     //Video info
     public static final String firebase_reference_video="Vlog";
+
     //child nodes
     public static final String firebase_reference_video_title="title";
     public static final String firebase_reference_video_path="path";
@@ -34,6 +35,11 @@ public class Constants {
 
 
     public static final String extras_firekeyreference="firekeyextras";
+
+
+    // Actions on videos
+    public static  final String firebase_reference_videos_deleted = "vdeleted";
+    public static  final String firebase_reference_videos_reported = "vreported";
 
 
 

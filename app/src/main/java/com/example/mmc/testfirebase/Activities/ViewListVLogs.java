@@ -9,12 +9,14 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.mmc.testfirebase.Adapters.ListItemsRecyclerAdapter;
 import com.example.mmc.testfirebase.Constants;
+import com.example.mmc.testfirebase.MainActivity;
 import com.example.mmc.testfirebase.Objects.ListIem;
 import com.example.mmc.testfirebase.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +34,8 @@ import java.util.Map;
  * Created by MMc on 2/22/2017.
  */
 public class ViewListVLogs extends AppCompatActivity {
+
+    static final String TAG = "ViewListVlogs";
 
     SharedPreferences prefs;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -68,6 +72,8 @@ public class ViewListVLogs extends AppCompatActivity {
 
     // Method to get all the data from child event listener
     private void getalldata() {
+
+        Log.e(TAG, "Fetching list of videos from DB");
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot snapshot, String s) {
@@ -89,6 +95,7 @@ public class ViewListVLogs extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
 
                 }
+
 
             }
 
@@ -112,6 +119,8 @@ public class ViewListVLogs extends AppCompatActivity {
 
             }
         });
+
+
     }
 
 
@@ -148,19 +157,18 @@ public class ViewListVLogs extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         /**
-        if (exit) {
-            finish();
-        } else {
-            Toast.makeText(this, "Click exit again to close", Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
-
+         if (exit) {
+         finish();
+         } else {
+         Toast.makeText(this, "Click exit again to close", Toast.LENGTH_SHORT).show();
+         exit = true;
+         new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+        exit = false;
         }
+        }, 3 * 1000);
+
+         }
          **/
     }
 

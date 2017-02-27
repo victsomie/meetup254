@@ -1,17 +1,25 @@
 package com.example.mmc.testfirebase.Activities;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mmc.testfirebase.Constants;
 import com.example.mmc.testfirebase.Objects.Comments;
@@ -46,18 +54,32 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ViewSingleItem extends AppCompatActivity implements View.OnClickListener,ExoPlayer.EventListener,
-        PlaybackControlView.VisibilityListener{
+public class ViewSingleItem extends AppCompatActivity implements View.OnClickListener, ExoPlayer.EventListener,
+        PlaybackControlView.VisibilityListener {
 
+    final String TAG = "ViewSingleItem";
+
+    long numOfReportedVideos;
+    long numOfDeletedVideos;
 
     SharedPreferences prefs;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+
     DatabaseReference myRef = database.getReference().child(Constants.firebase_reference_video);
+
+    DatabaseReference mainRef = database.getReference();
+
+    // Reference what to delete
+    DatabaseReference videosReportedRef = database.getReference().child(Constants.firebase_reference_videos_reported);
+    DatabaseReference videosDeletedRef = database.getReference().child(Constants.firebase_reference_videos_deleted);
+
 
     //    VideoView playVideo;
     SimpleExoPlayerView playVideo;
@@ -66,6 +88,8 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
     EditText addComment;
     String FirebaseKey, username;
     ListIem SelectVideoObject;
+
+    Map<String, Object> newPost; // Map of the single video detail we are viewing. WIll be retrieved as a map from DB
     Comments commentobject;
     List<String> commentslazycount;
     SimpleExoPlayer player;
@@ -170,7 +194,8 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
         myRef.orderByKey().equalTo(FirebaseKey).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String, Object> newPost = (Map<String, Object>) dataSnapshot.getValue();
+                // Map<String, Object> newPost = (Map<String, Object>) dataSnapshot.getValue();
+                newPost = (Map<String, Object>) dataSnapshot.getValue(); // the map of the file being viewed
                 if (newPost != null) {
                     SelectVideoObject = new ListIem(
                             newPost.get(Constants.firebase_reference_video_title).toString(),
@@ -185,8 +210,8 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
                     titleTextView.setText(SelectVideoObject.getTitle());
                     setMediasource(Uri.parse(SelectVideoObject.getPath()));
 
-
                 }
+
 
             }
 
@@ -293,6 +318,140 @@ public class ViewSingleItem extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onVisibilityChange(int visibility) {
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_single_item, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuId = item.getItemId();
+        //numOfDeletedVideos = 0;
+
+        if (menuId == R.id.menu_item_delete_video) {
+            // Add video do delete
+            Toast.makeText(this, "You want to delete video : " + FirebaseKey, Toast.LENGTH_SHORT).show();
+            videosDeletedRef.push().setValue(FirebaseKey);
+
+            mainRef.addChildEventListener(new ChildEventListener() {
+
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (dataSnapshot.getKey() == Constants.firebase_reference_videos_deleted){
+                        Log.i(TAG, "onDataChange: +++***bhrrrr***+++" + dataSnapshot.getKey() + " ++++>> " + dataSnapshot.getChildrenCount());
+                        numOfDeletedVideos = dataSnapshot.getChildrenCount();
+                        Toast.makeText(ViewSingleItem.this, "Videos to delete : " + numOfDeletedVideos, Toast.LENGTH_SHORT).show();
+                    }
+
+                    for (DataSnapshot snap: dataSnapshot.getChildren()) {
+                        /*
+                        numOfDeletedVideos = snap.getChildrenCount();
+                        //Toast.makeText(ViewSingleItem.this, numOfDeletedVideos + " videos to be deleted!", Toast.LENGTH_SHORT).show();
+                        Log.i(TAG, "onDataChange: " + snap.getKey() + " >> " + numOfDeletedVideos);
+                        */
+                        if (snap.getKey() == Constants.firebase_reference_videos_deleted){
+                            Log.i(TAG, "^^^^^^^^^^^^^^^^ " + snap.getChildrenCount() + " is the number! ^^^^^^^^^^^");
+                            Log.i(TAG, "onDataChange: ++++++++" + snap.getKey() + " ++++++>> " + snap.getChildrenCount());
+                            break;
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // User alertDialog to confirm deleting
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Video will be deleted")
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // ======TODO: ensure real video deleting is possible
+                            // After deleting go back to the list of videos
+
+                            // myRef.child(FirebaseKey).removeValue();
+                            Log.e(TAG, "OK BUTTON will delete" + myRef.child(FirebaseKey).getKey());
+
+
+                            // ====== Currently its just UI =====
+                            Intent backToVideosList = new Intent(ViewSingleItem.this, ViewListVLogs.class);
+                            startActivity(backToVideosList);
+
+                            // Toast what you have done
+                            Toast.makeText(ViewSingleItem.this, "Work on this later", Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
+            builder.create().show();
+        }
+        if (menuId == R.id.menu_item_report_video) {
+
+            // Add video do delete
+            Toast.makeText(this, "Reporting video : " + FirebaseKey, Toast.LENGTH_SHORT).show();
+            videosReportedRef.push().setValue(FirebaseKey);
+
+            videosReportedRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    numOfReportedVideos = dataSnapshot.getChildrenCount();
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            Toast.makeText(this, numOfReportedVideos + " videos REPORTED!", Toast.LENGTH_SHORT).show();
+        }
+
+
+        return super.onOptionsItemSelected(item);
     }
 
 }
